@@ -874,13 +874,13 @@ func TestV2WatchKeyInDir(t *testing.T) {
 	resp, _ = tc.PutForm(fmt.Sprintf("%s%s", u, "/v2/keys/keyindir/bar"), v)
 	resp.Body.Close()
 
-	t.Log("start waiting on key in dir")
+	t.Log(time.Now(), "start waiting on key in dir")
 	go func() {
 		// Expect a notification when watching the node
 		resp, _ := tc.Get(fmt.Sprintf("%s%s", u, "/v2/keys/keyindir/bar?wait=true"))
-		t.Log("start reading the change on key in dir")
+		t.Log(time.Now(), "start reading the change on key in dir")
 		body = tc.ReadBodyJSON(resp)
-		t.Log("end reading the change on key in dir")
+		t.Log(time.Now(), "end reading the change on key in dir")
 		c <- true
 	}()
 
