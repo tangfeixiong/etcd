@@ -1,0 +1,25 @@
+# A headless service to create DNS records
+# Maintainer tangfeixiong <fxtang@qingyuanos.com>
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+  labels:
+    app: etcd
+    qingyuanos.io/harpoon: etcd-v3
+    qingyuanos.io/heritage: qingyuancloud
+  name: etcd-v3
+  # namespace: qingyuancloud
+spec:
+  # *.etcd-v3.default|qingyuancloud.svc.cluster.local
+  clusterIP: None
+  ports:
+  - port: 2379
+    name: client
+  - port: 2380
+    name: peer
+  selector:
+    qingyuanos.io/harpoon: etcd-v3
+    qingyuanos.io/heritage: qingyuancloud

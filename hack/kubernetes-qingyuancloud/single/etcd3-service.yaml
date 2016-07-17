@@ -1,0 +1,26 @@
+# Maintainer tangfeixiong <fxtang@qingyuanos.com>
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: etcd
+    qingyuanos.io/harpoon: etcd-v3-single
+    qingyuanos.io/heritage: qingyuancloud
+  name: etcd-v3-single
+  # namespace: qingyuancloud
+spec:
+  ports:
+  - name: client
+    nodePort: 30001
+    port: 2379
+    protocol: TCP
+    targetPort: 2379
+ #  - name: peer
+ #    port: 2380
+ #    protocol: TCP
+ #    targetPort: 2380
+  selector:
+    qingyuanos.io/harpoon: etcd-v3-single
+    qingyuanos.io/heritage: qingyuancloud
+  type: NodePort

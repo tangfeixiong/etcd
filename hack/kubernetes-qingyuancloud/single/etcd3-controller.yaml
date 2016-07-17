@@ -1,0 +1,54 @@
+# Maintainer tangfeixiong <fxtang@qingyuanos.com>
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  labels:
+    app: etcd
+    qingyuanos.io/harpoon: etcd-v3-single
+    qingyuanos.io/heritage: qingyuancloud
+  name: etcd-v3-single
+  # namespace: qingyuancloud
+spec:
+  replicas: 1
+  selector:
+    qingyuanos.io/harpoon: etcd-v3-single
+    qingyuanos.io/heritage: qingyuancloud
+  template:
+    metadata:
+      labels:
+        qingyuanos.io/harpoon: etcd-v3-single
+        qingyuanos.io/heritage: qingyuancloud
+      name: etcd-v3-single
+    spec:
+      containers:
+      - args:
+        - --data-dir
+        - /var/etcd
+        - --listen-client-urls
+        - 'http://0.0.0.0:2379'
+        - --advertise-client-urls
+        - 'http://$(ETCD_V3_SINGLE_SERVICE_HOST):$(ETCD_V3_SINGLE_SERVICE_PORT)'
+        command:
+        - /usr/local/bin/etcd
+        image: quay.io/coreos/etcd:v3.0.2
+        imagePullPolicy: IfNotPresent
+        name: etcd-v3-single
+        ports:
+        - containerPort: 2379
+          name: client
+          protocol: TCP
+        # - containerPort: 2380
+        #   name: peer
+        #   protocol: TCP
+        volumeMounts:
+        - mountPath: /var/etcd
+          name: etcd-data # etcd-store
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      volumes:
+      - emptyDir: {}
+        name: etcd-data
+      - hostPath:
+          path: /tmp/etcd-v3-single
+        name: etcd-store
