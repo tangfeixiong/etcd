@@ -5,15 +5,16 @@ apiVersion: v1
 kind: Service
 metadata:
   annotations:
+    qingyuanos.io/catalog: '{"version": "v1alpha", "lib": "https://github.com/qingyuancloud/kube-harpoon"}'
     service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
   labels:
-    app: etcd
-    qingyuanos.io/harpoon: etcd-v3
+    app: etcd3
+    qingyuanos.io/harpoon: etcd3-cluster
     qingyuanos.io/heritage: qingyuancloud
-  name: etcd-v3
-  # namespace: qingyuancloud
+  name: etcd3-cluster
+  # namespace: harpoon
 spec:
-  # *.etcd-v3.default|qingyuancloud.svc.cluster.local
+  # *.etcd3-cluster.default|qingyuancloud.svc.cluster.local
   clusterIP: None
   ports:
   - port: 2379
@@ -21,5 +22,5 @@ spec:
   - port: 2380
     name: peer
   selector:
-    qingyuanos.io/harpoon: etcd-v3
+    qingyuanos.io/harpoon: etcd3-cluster
     qingyuanos.io/heritage: qingyuancloud

@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: etcd3-cluster
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+    - ReadOnlyMany
+    - ReadWriteMany
+  hostPath:
+    path: /tmp/pv-etcd3-cluster/
+  # nfs:
+  #   path: /tmp/nfsroot
+  #   readOnly: false
+  #   server: 172.17.0.2
+  claimRef:
+    name: etcd3-cluster
+  persistentVolumeReclaimPolicy: Retain # Recycle Delete Retain

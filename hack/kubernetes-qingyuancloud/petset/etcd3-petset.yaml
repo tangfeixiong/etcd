@@ -1,0 +1,82 @@
+apiVersion: apps/v1alpha1
+kind: PetSet
+metadata:
+  annotations:
+    qingyuanos.io/catalog: '{"version": "v1alpha", "lib": "https://github.com/qingyuancloud/kube-harpoon"}'  
+  labels:
+    app: etcd3
+    qingyuanos.io/harpoon: etcd3-cluster
+    qingyuanos.io/heritage: qingyuancloud
+  name: etcd3-cluster
+  # namespace: harpoon
+spec:
+  replicas: 3
+  # selector: {}
+  serviceName: etcd3-cluster
+  template:
+    metadata:
+      annotations:
+        pod.alpha.kubernetes.io/initialized: "true"
+      labels:
+        qingyuanos.io/harpoon: etcd3-cluster
+        qingyuanos.io/heritage: qingyuancloud
+      name: etcd3-cluster
+    spec:
+      containers:
+      - command:
+        - /usr/local/bin/etcd   
+        - --name
+        - "$(hostname)"
+        - --data-dir
+        - /var/etcd
+        - --listen-client-urls
+        - http://0.0.0.0:2379
+        - --listen-peer-urls
+        - http://0.0.0.0:2380
+        - --advertise-client-urls
+        - http://$(HOSTNAME):2379
+        - --initial-advertise-peer-urls
+        - http://$(HOSTNAME):2380
+        - --initial-cluster
+        - etcd3-cluster-0=http://etcd3-cluster-0:2380,etcd3-cluster-1=http://etcd3-cluster-1:2380,etcd3-cluster-2=http://etcd3-cluster-2:2380
+        - --initial-cluster-state
+        - new
+        # dnsPolicy: ClusterFirst
+        image: quay.io/coreos/etcd:v3.0.2
+        imagePullPolicy: IfNotPresent
+        name: etcd3-cluster
+        # restartPolicy: Always
+        ports:
+        - containerPort: 2379
+          name: client
+          protocol: TCP
+        - containerPort: 2380
+          name: peer
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /var/etcd
+          name: etcd3-cluster # etcd-data # etcd-store
+      # volumes:
+      # - emptyDir: {}
+      #   name: etcd-data
+      # - hostPath:
+      #     path: /tmp/etcd-v3-single
+      #   name: etcd-store  
+  volumeClaimTemplates:
+  - metadata:
+      annotations:
+        volume.alpha.kubernetes.io/storage-class: anything
+      labels:
+        qingyuanos.io/harpoon: etcd3-cluster
+        qingyuanos.io/heritage: qingyuancloud
+      name: etcd3-cluster
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      # selector: {}
+      resources:
+        limits:
+          storage: 1Gi
+        requests: 
+          storage: 500Mi
+      # volumeName: etcd3-cluster
